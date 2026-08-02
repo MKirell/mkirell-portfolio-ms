@@ -11,23 +11,6 @@
 
 **Live:** <https://api.mkirell.com/api/v1>
 
-## Table of contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Tech stack](#tech-stack)
-- [Quick start](#quick-start)
-- [Configuration](#configuration)
-- [API reference](#api-reference)
-- [Data model](#data-model)
-- [Project structure](#project-structure)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Security](#security)
-- [Related repositories](#related-repositories)
-- [License](#license)
-- [Author](#author)
-
 ## Overview
 
 One data domain, two access levels:
