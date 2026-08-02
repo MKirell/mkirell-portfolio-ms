@@ -1,0 +1,115 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    if: vars.CI_ENABLED != 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Test
+        run: npm run test:cov
+
+      - name: Build
+        run: npm run build
+
+  image:
+    needs: quality
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED != 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check the deploy variables are set
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          LAMBDA_FUNCTION_NAME: ${{ vars.LAMBDA_FUNCTION_NAME }}
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          missing=""
+          for v in AWS_REGION AWS_DEPLOY_ROLE_ARN ECR_REPOSITORY LAMBDA_FUNCTION_NAME API_BASE_URL; do
+            eval "value=\${$v:-}"
+            [ -z "$value" ] && missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Repository variables not set:$missing"
+            echo "Settings -> Secrets and variables -> Actions -> Variables" >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+
+      - name: Build and push
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          TAG: ${{ github.sha }}
+        run: |
+          docker build --platform linux/amd64 \
+            -t "$REGISTRY/$REPOSITORY:$TAG" \
+            -t "$REGISTRY/$REPOSITORY:latest" .
+          docker push "$REGISTRY/$REPOSITORY:$TAG"
+          docker push "$REGISTRY/$REPOSITORY:latest"
+
+      - name: Roll the function onto the new image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          TAG: ${{ github.sha }}
+          FUNCTION: ${{ vars.LAMBDA_FUNCTION_NAME }}
+        run: |
+          aws lambda update-function-code \
+            --function-name "$FUNCTION" \
+            --image-uri "$REGISTRY/$REPOSITORY:$TAG" \
+            --publish >/dev/null
+          aws lambda wait function-updated --function-name "$FUNCTION"
+
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 10); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.API_BASE_URL }}/health" || true)
+            [ "$code" = "200" ] && echo "healthy" && exit 0
+            sleep 6
+          done
+          echo "health check never returned 200" >&2
+          exit 1
