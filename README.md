@@ -210,12 +210,14 @@ Sign-in, sign-out, consent and refresh all happen at Cognito. No endpoint here i
 
 ### Postman
 
-The collection lives one level above this repository, in the workspace root:
+The collection and both environments live in `postman/`:
 
 ```bash
-npx newman run "../postman/MKirell Portfolio MS.postman_collection.json" \
-  -e "../postman/MKirell Portfolio MS - Development.postman_environment.json"
+npx newman run postman/portfolio-ms.postman_collection.json \
+  -e postman/development.postman_environment.json
 ```
+
+Swap in `production.postman_environment.json` to run the same suite against the live API.
 
 Every endpoint plus the negative cases — 401 without a token, 400 on bad payloads, 404 on unknown
 languages, NoSQL operators, forged JWTs, security headers. A collection-level pre-request script fetches
