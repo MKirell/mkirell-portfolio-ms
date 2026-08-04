@@ -84,7 +84,7 @@ variable, not a code change.
 
 ```bash
 npm install
-docker run -d -p 27017:27017 --name mkirell-mongo mongo:7
+docker run -d -p 27017:27017 --name mkirell-mongo mongo:7.0
 npm run dev
 ```
 
