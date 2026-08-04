@@ -1,7 +1,7 @@
 {
   "name": "mkirell-portfolio-ms",
   "version": "1.0.0",
-  "description": "Portfolio data microservice \u2014 public reads for the portfolio viewer, authenticated CRUD for the chronicle admin",
+  "description": "Portfolio data microservice \u2014 public reads for the portfolio viewer, authenticated CRUD for the console admin",
   "author": "Mohamed Khalil ZRELLY",
   "license": "Apache-2.0",
   "private": true,

@@ -7,7 +7,7 @@ const baseEnv = {
   CORS_ORIGINS: 'http://localhost:5173',
   COGNITO_REGION: 'eu-west-3',
   COGNITO_USER_POOL_ID: 'eu-west-3_Ab12Cd34E',
-  COGNITO_ALLOWED_CLIENT_IDS: '2q7hbf0mkirellchronicle01',
+  COGNITO_ALLOWED_CLIENT_IDS: '2q7hbf0mkirellconsole0001',
 }
 
 function validate(overrides: Record<string, unknown> = {}) {

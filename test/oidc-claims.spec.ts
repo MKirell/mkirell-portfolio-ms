@@ -6,7 +6,7 @@ import type { CognitoAccessToken } from '@/common/types/authenticated-user'
 
 const POLICY: ClaimsPolicy = {
   resourceServer: 'mkirell-portfolio-ms',
-  allowedClientIds: ['chronicle-client', 'ci-client'],
+  allowedClientIds: ['console-client', 'ci-client'],
 }
 
 function token(overrides: Partial<CognitoAccessToken> = {}): CognitoAccessToken {
@@ -14,7 +14,7 @@ function token(overrides: Partial<CognitoAccessToken> = {}): CognitoAccessToken 
     sub: 'a3f1c0de-0000-4000-8000-000000000001',
     iss: 'https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_Ab12Cd34E',
     token_use: 'access',
-    client_id: 'chronicle-client',
+    client_id: 'console-client',
     username: 'owner',
     ...overrides,
   }

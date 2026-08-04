@@ -35,7 +35,7 @@ One data domain, two access levels:
 | Consumer               | Access                           | Auth                           |
 | ---------------------- | -------------------------------- | ------------------------------ |
 | `mkirell-portfolio-mf` | Read the portfolio               | None — public                  |
-| `mkirell-chronicle-mf` | Full CRUD over the same entities | Cognito — bearer token + scope |
+| `mkirell-console-mf`   | Full CRUD over the same entities | Cognito — bearer token + scope |
 
 Access control is enforced **here**, not in the frontends. A global `JwtAuthGuard` denies by default and
 public reads opt out with `@Public()`, so a new endpoint is protected even if you forget to decorate it.
@@ -50,7 +50,7 @@ pointing at the same pool instead of copying this code.
 ```text
 mkirell-portfolio-mf ──► GET /portfolio ─────┐
                                              │
-mkirell-chronicle-mf ──► /admin/* + token ───┤
+mkirell-console-mf   ──► /admin/* + token ───┤
                                              ▼
                                     API Gateway (api.mkirell.com)
                                              │

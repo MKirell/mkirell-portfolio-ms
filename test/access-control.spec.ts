@@ -221,7 +221,7 @@ describe('read/write access control', () => {
     })
   })
 
-  describe('the chronicle admin', () => {
+  describe('the console admin', () => {
     it('creates an entry', async () => {
       await request(app.getHttpServer())
         .post('/admin/experiences')

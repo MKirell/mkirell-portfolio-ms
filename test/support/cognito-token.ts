@@ -8,7 +8,7 @@ export const USER_POOL_ID = 'eu-west-3_Ab12Cd34E'
 export const ISSUER = `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}`
 export const RESOURCE_SERVER = 'mkirell-portfolio-ms'
 export const ADMIN_SCOPE = `${RESOURCE_SERVER}/admin`
-export const CHRONICLE_CLIENT_ID = '2q7hbf0mkirellchronicle01'
+export const CONSOLE_CLIENT_ID = '2q7hbf0mkirellconsole0001'
 export const CI_CLIENT_ID = '5r8jdg1mkirellautomation2'
 
 export const poolKeys = generateKeyPairSync('rsa', {
@@ -33,8 +33,8 @@ export const cognitoConfig = {
   issuerUrl: ISSUER,
   jwksUri: `${ISSUER}/.well-known/jwks.json`,
   resourceServer: RESOURCE_SERVER,
-  allowedClientIds: [CHRONICLE_CLIENT_ID, CI_CLIENT_ID],
-  frontendClientId: CHRONICLE_CLIENT_ID,
+  allowedClientIds: [CONSOLE_CLIENT_ID, CI_CLIENT_ID],
+  frontendClientId: CONSOLE_CLIENT_ID,
   hostedUiDomain: 'https://auth.mkirell.com',
   algorithms: ['RS256'] as const,
   jwksCacheMaxAge: 600_000,
@@ -51,7 +51,7 @@ export function accessToken(
   return jwt.sign(
     {
       token_use: 'access',
-      client_id: CHRONICLE_CLIENT_ID,
+      client_id: CONSOLE_CLIENT_ID,
       username: 'owner',
       ...rest,
     },

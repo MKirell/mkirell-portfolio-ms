@@ -13,7 +13,7 @@ import { RolesGuard } from '@/common/guards/roles.guard'
 import { AllExceptionsFilter } from '@/common/filters/all-exceptions.filter'
 import {
   adminToken,
-  CHRONICLE_CLIENT_ID,
+  CONSOLE_CLIENT_ID,
   cognitoConfig,
   ISSUER,
   REGION,
@@ -54,7 +54,7 @@ describe('AuthController', () => {
         issuer: ISSUER,
         region: REGION,
         userPoolId: USER_POOL_ID,
-        clientId: CHRONICLE_CLIENT_ID,
+        clientId: CONSOLE_CLIENT_ID,
         hostedUiDomain: 'https://auth.mkirell.com',
         scopes: ['openid', 'profile', 'email', 'mkirell-portfolio-ms/admin'],
       })
